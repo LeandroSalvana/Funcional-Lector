@@ -15,7 +15,7 @@ def procesar_imagen():
         return 'No se proporcionó ninguna imagen.'
     imagen = request.files['imagen']
     if imagen.filename == '':
-        resultado = 'No se seleccionó ningún.'
+        resultado = 'No se seleccionó ningún archivo.'
         return resultado
 
     # Redimensionar la imagen

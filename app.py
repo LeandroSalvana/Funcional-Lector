@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request
 from pyzxing.pepito import procesar_codigo, redimensionar_imagen
 import os
@@ -16,7 +15,8 @@ def procesar_imagen():
         return 'No se proporcionó ninguna imagen.'
     imagen = request.files['imagen']
     if imagen.filename == '':
-        return 'No se seleccionó ningún archivo.'
+        resultado = 'No se seleccionó ningún.'
+        return resultado
 
     # Redimensionar la imagen
     imagen_redimensionada = redimensionar_imagen(imagen)
@@ -31,6 +31,12 @@ def procesar_imagen():
 
         # Procesar la imagen con el nombre del archivo temporal
         resultado = procesar_codigo(temp_filename)
+        if isinstance(resultado, str):
+            # Si el resultado es una cadena, crea un diccionario con un mensaje de error
+            resultado = {'error': resultado}
+    except Exception as e:
+        # Capturar cualquier otro error y devolver un diccionario con un mensaje de error
+        resultado = {'error': 'Codigo no encontrada en la imagen'}
     finally:
         # Eliminar el archivo temporal
         os.remove(temp_filename)

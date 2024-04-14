@@ -11,21 +11,22 @@ conn = mysql.connector.connect(
 print(conn)
 
 
-
 cursor = conn.cursor()
-sql = """INSERT INTO dni_datos (Apellido, Nombre) VALUES (%s, %s)"""
-valores = ('Salva', "Karina")
+sql = """INSERT INTO dni_datos (n_de_tramite, apellido, nombre, sexo, n_de_dni, tipo, n_de_nacimiento, fecha_de_nacimiento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+valores = ()
 
-cursor.execute(sql, valores)
+#sql = """SELECT * FROM dni_datos"""
+
+cursor.execute(sql)
+
+#datos = cursor.fetchall()
 
 conn.commit()
-
-#print(cursor.lastrowid)
 
 #cursor.execute("SHOW TABLES")
 #cursor.execute("CREATE DATABASE dni_lector")
 #cursor.execute("SHOW DATABASES")
-#for datos in cursor:
-    #print(datos)
+#for dato in datos:
+    #print(dato)
 
 conn.close()

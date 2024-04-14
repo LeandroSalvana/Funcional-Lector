@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 
+
 def procesar_codigo(imagen):
     # Esto es de la libreria
     reader = BarCodeReader()
@@ -23,6 +24,8 @@ def procesar_codigo(imagen):
         return "Pone un documento geni@"
     else:
         return (objeto_raw)
+
+    
 
 
 def redimensionar_imagen(imagen):
@@ -51,3 +54,24 @@ def redimensionar_imagen(imagen):
     imagen_redimensionada_bytesio = BytesIO(buffer)
 
     return imagen_redimensionada_bytesio
+
+
+def tupla_mysql(imagen):
+    # Esto es de la libreria
+    reader = BarCodeReader()
+    results = reader.decode(imagen)
+
+    # ----------------Aca esta la magia----------------------
+    
+            # Accedo al indice 0 de la lista que me devuelve (que es un diccionario)
+    raw = results[0]
+    valor_raw = raw["raw"]
+    valor_raw = valor_raw.decode("utf-8")
+    valor_raw = valor_raw.replace("NXX","Ñ")
+    valor_raw = valor_raw.split("@")
+    valor_datos= tuple(valor_raw)
+    tupla_datos = tuple(s.replace('"', "'") for s in valor_datos)
+   
+    return (tupla_datos[:8])
+
+   

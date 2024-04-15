@@ -5,9 +5,7 @@ import os.path as osp
 import re
 import shutil
 import subprocess
-
 from joblib import Parallel, delayed
-
 from .utils import get_file
 
 preset_jar_url_prefix = "https://github.com/ChenjieXu/pyzxing/releases/download/v0.1/"

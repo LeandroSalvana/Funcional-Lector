@@ -87,11 +87,8 @@ def procesar_imagen():
             
             finally:
                 # Cerrar el cursor
-                cursor.close()
+                cursor.close()   
                 
-                # Eliminar el archivo temporal
-                os.remove(temp_filename)
-    
     except MySQLError as e:
         # Capturar cualquier otro error de MySQL
         resultado = {'error': 'Error de base de datos: ' + str(e)}
@@ -100,7 +97,11 @@ def procesar_imagen():
         # Capturar cualquier otro error
         resultado = {'error': 'Código no encontrado en la imagen'}
     
-    return render_template('resultado.html', resultado=resultado)
+    finally:
+        # Eliminar el archivo temporal
+        os.remove(temp_filename)
+
+        return render_template('resultado.html', resultado=resultado)
 
 if __name__ == '__main__':
     app.run(debug=True)

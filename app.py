@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, jsonify
 from pyzxing.pepito import procesar_codigo, redimensionar_imagen, tupla_mysql
 import os
+from flask_cors import CORS
 import mysql.connector
 from mysql.connector import IntegrityError, Error as MySQLError
 
 app = Flask(__name__)
-
+CORS(app)
 # Configuración de la base de datos
 app.config['DB_HOST'] = 'localhost'
 app.config['DB_USER'] = 'Leandro'
@@ -30,18 +31,17 @@ def close_db(error):
     if db is not None:
         db.close()
 
-@app.route('/')
-def upload_form():
-    return render_template('upload.html')
+#@app.route('/')
+#def upload_form():
+    #return render_template('upload.html')
 
 @app.route('/procesar_imagen', methods=['POST'])
 def procesar_imagen():
     if 'imagen' not in request.files:
-        return 'No se proporcionó ninguna imagen.'
+        return {'Error': 'No se proporcionó ninguna imagen.'}, 400
     imagen = request.files['imagen']
     if imagen.filename == '':
-        resultado = 'No se seleccionó ningún archivo.'
-        return resultado
+        return 'No se seleccionó ningún archivo.', 400
 
     # Redimensionar la imagen
     imagen_redimensionada = redimensionar_imagen(imagen)
@@ -56,14 +56,13 @@ def procesar_imagen():
 
         # Procesar la imagen con el nombre del archivo temporal
         resultado = procesar_codigo(temp_filename)
-        
+
         if isinstance(resultado, str):
             # Si el resultado es una cadena, crea un diccionario con un mensaje de error
             resultado = {'error': resultado}
         else:
             # Obtener la tupla de datos
             tupla = tupla_mysql(temp_filename)
-            print(tupla)
             
             # Obtener el cursor de la base de datos
             cursor = get_db().cursor()
@@ -77,6 +76,9 @@ def procesar_imagen():
                 
                 # Confirmar la transacción
                 get_db().commit()
+                #result = {'success': True}
+
+                #return(result)
             
             except IntegrityError as e:
                 # Manejar el error de clave duplicada
@@ -101,7 +103,7 @@ def procesar_imagen():
         # Eliminar el archivo temporal
         os.remove(temp_filename)
 
-        return render_template('resultado.html', resultado=resultado)
+        return jsonify(resultado)
 
 if __name__ == '__main__':
     app.run(debug=True)
